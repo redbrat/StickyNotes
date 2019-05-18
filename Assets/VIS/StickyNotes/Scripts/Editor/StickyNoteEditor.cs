@@ -5,10 +5,10 @@ using UnityEngine;
 public class StickyNoteEditor : Editor
 {
     private const float _bodyPadding = 8f;
-    private const float _contentMargin = 4f;
+    private const int _contentMargin = 6;
     private const float _headerHeight = 30f;
     private const float _editButtonWidth = 60f;
-    private const float _colorPickerWidth = 22f;
+    private const float _colorPickerWidth = 18f;
 
     private StickyNote _noteCache;
 
@@ -91,7 +91,8 @@ public class StickyNoteEditor : Editor
 
         //var lastRect = GUILayoutUtility.GetLastRect();
 
-        var assumedTextRect = GUILayoutUtility.GetRect(new GUIContent(_textPropCache.stringValue), _textStyle);
+        _textStyle.margin = new RectOffset(_contentMargin, _contentMargin, _contentMargin, _contentMargin);
+        var assumedTextRect = GUILayoutUtility.GetRect(new GUIContent(_textPropCache.stringValue), _textStyle, GUILayout.ExpandWidth(false));
         //_textAreaHeight = assumedTextRect.y;
         var borderRect = assumedTextRect;
         borderRect.x = _bodyPadding;
@@ -129,10 +130,10 @@ public class StickyNoteEditor : Editor
         colorPickerRect.height -= _contentMargin * 2;
 
         var textRect = mainRect;
-        textRect.x += _contentMargin;
-        textRect.y += _contentMargin;
-        textRect.height -= _contentMargin * 2;
-        textRect.width -= _contentMargin * 2;
+        //textRect.x += _contentMargin;
+        //textRect.y += _contentMargin;
+        //textRect.height -= _contentMargin * 2;
+        //textRect.width -= _contentMargin * 2;
 
         switch (_state)
         {
