@@ -130,10 +130,10 @@ public class StickyNoteEditor : Editor
         colorPickerRect.height -= _contentMargin * 2;
 
         var textRect = mainRect;
-        //textRect.x += _contentMargin;
-        //textRect.y += _contentMargin;
-        //textRect.height -= _contentMargin * 2;
-        //textRect.width -= _contentMargin * 2;
+        textRect.x += _contentMargin;
+        textRect.y += _contentMargin;
+        textRect.height -= _contentMargin * 2;
+        textRect.width -= _contentMargin * 2;
 
         switch (_state)
         {
