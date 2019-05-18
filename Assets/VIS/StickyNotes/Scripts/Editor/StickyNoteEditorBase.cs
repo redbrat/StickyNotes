@@ -13,7 +13,8 @@ namespace VIS.ObjectDescription.Editor
                         base.OnInspectorGUI,
                         findProperty,
                         applyModifiedProperties,
-                        () => needToDrawBaseInspector
+                        () => needToDrawBaseInspector,
+                        () => 1
                     );
 
                 return _stickyNoteEditorBehaviourBackingField;
@@ -36,8 +37,8 @@ namespace VIS.ObjectDescription.Editor
             _stickyNoteEditorBehaviour.OnInspectorGUI();
         }
 
-        protected virtual SerializedProperty findProperty(string propertyName) => serializedObject.FindProperty(propertyName);
-        protected virtual void applyModifiedProperties() => serializedObject.ApplyModifiedProperties();
+        protected virtual SerializedProperty findProperty(int index, string propertyName) => serializedObject.FindProperty(propertyName);
+        protected virtual void applyModifiedProperties(int index) => serializedObject.ApplyModifiedProperties();
         protected virtual bool needToDrawBaseInspector => false;
     }
 }

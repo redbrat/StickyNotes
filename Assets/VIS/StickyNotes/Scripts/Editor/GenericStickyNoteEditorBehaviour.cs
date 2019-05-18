@@ -12,77 +12,98 @@ namespace VIS.ObjectDescription.Editor
         private const float _editButtonWidth = 60f;
         private const float _colorPickerWidth = 18f;
 
-        private SerializedProperty _descriptionPropCache;
-        private SerializedProperty _textPropCache;
-        private SerializedProperty _colorPropCache;
+        private SerializedProperty[] _descriptionPropsCache;
+        private SerializedProperty[] _textPropsCache;
+        private SerializedProperty[] _colorPropsCache;
 
-        private StickyNoteState _state;
+        private StickyNoteState[] _states;
 
-        private GUIStyle _borderStyle;
-        private GUIStyle _headerStyle;
-        private GUIStyle _mainStyle;
-        private GUIStyle _buttonStyle;
-        private GUIStyle _descriptionStyle;
-        private GUIStyle _textStyle;
+        private GUIStyle[] _borderStyles;
+        private GUIStyle[] _headerStyles;
+        private GUIStyle[] _mainStyles;
+        private GUIStyle[] _buttonStyles;
+        private GUIStyle[] _descriptionStyles;
+        private GUIStyle[] _textStyles;
 
         private Action _baseOnInspectorGUIAction;
-        private Func<string, SerializedProperty> _findPropertyFunc;
-        private Action _applyModifiedPropertiesAction;
+        private Func<int, string, SerializedProperty> _findPropertyFunc;
+        private Action<int> _applyModifiedPropertiesAction;
         private Func<bool> _needToDrawBaseInspectorFunc;
+        private Func<int> _notesCountFunc;
 
         internal GenericStickyNoteEditorBehaviour(
             Action baseOnInspectorGUIAction,
-            Func<string, SerializedProperty> findPropertyFunc,
-            Action applyModifiedPropertiesAction,
-            Func<bool> needToDrawBaseInspectorFunc)
+            Func<int, string, SerializedProperty> findPropertyFunc,
+            Action<int> applyModifiedPropertiesAction,
+            Func<bool> needToDrawBaseInspectorFunc,
+            Func<int> notesCountFunc)
         {
             _baseOnInspectorGUIAction = baseOnInspectorGUIAction;
             _findPropertyFunc = findPropertyFunc;
             _applyModifiedPropertiesAction = applyModifiedPropertiesAction;
             _needToDrawBaseInspectorFunc = needToDrawBaseInspectorFunc;
+            _notesCountFunc = notesCountFunc;
         }
 
         internal void OnEnable()
         {
-            _descriptionPropCache = _findPropertyFunc("_headerText");
-            _textPropCache = _findPropertyFunc("_text");
-            _colorPropCache = _findPropertyFunc("_color");
+            var count = _notesCountFunc();
 
-            _borderStyle = new GUIStyle();
-            _borderStyle.normal.background = new Texture2D(1, 1);
-            _borderStyle.normal.background.SetPixel(0, 0, Color.black);
-            _borderStyle.normal.background.Apply();
+            _descriptionPropsCache = new SerializedProperty[count];
+            _textPropsCache = new SerializedProperty[count];
+            _colorPropsCache = new SerializedProperty[count];
 
-            _mainStyle = new GUIStyle();
-            _mainStyle.normal.background = new Texture2D(1, 1);
-            _headerStyle = new GUIStyle();
-            _headerStyle.normal.background = new Texture2D(1, 1);
+            _borderStyles = new GUIStyle[count];
+            _headerStyles = new GUIStyle[count];
+            _mainStyles = new GUIStyle[count];
+            _buttonStyles = new GUIStyle[count];
+            _descriptionStyles = new GUIStyle[count];
+            _textStyles = new GUIStyle[count];
 
-            _descriptionStyle = new GUIStyle();
-            _textStyle = new GUIStyle();
+            _states = new StickyNoteState[count];
 
-            _descriptionStyle.richText = true;
-            _textStyle.richText = true;
+            for (int i = 0; i < count; i++)
+            {
+                _descriptionPropsCache[i] = _findPropertyFunc(i, "_headerText");
+                _textPropsCache[i] = _findPropertyFunc(i, "_text");
+                _colorPropsCache[i] = _findPropertyFunc(i, "_color");
 
-            _descriptionStyle.fontSize = 20;
-            _textStyle.fontSize = 16;
-            _textStyle.wordWrap = true;
+                _borderStyles[i] = new GUIStyle();
+                _borderStyles[i].normal.background = new Texture2D(1, 1);
+                _borderStyles[i].normal.background.SetPixel(0, 0, Color.black);
+                _borderStyles[i].normal.background.Apply();
+
+                _mainStyles[i] = new GUIStyle();
+                _mainStyles[i].normal.background = new Texture2D(1, 1);
+                _headerStyles[i] = new GUIStyle();
+                _headerStyles[i].normal.background = new Texture2D(1, 1);
+
+                _descriptionStyles[i] = new GUIStyle();
+                _textStyles[i] = new GUIStyle();
+
+                _descriptionStyles[i].richText = true;
+                _textStyles[i].richText = true;
+
+                _descriptionStyles[i].fontSize = 20;
+                _textStyles[i].fontSize = 16;
+                _textStyles[i].wordWrap = true;
+            }
         }
 
         internal void OnDisable()
         {
-            _textPropCache = null;
-            _colorPropCache = null;
-            _descriptionPropCache = null;
+            _textPropsCache = null;
+            _colorPropsCache = null;
+            _descriptionPropsCache = null;
 
-            _borderStyle = null;
-            _mainStyle = null;
-            _headerStyle = null;
-            _buttonStyle = null;
-            _descriptionStyle = null;
-            _textStyle = null;
+            _borderStyles = null;
+            _mainStyles = null;
+            _headerStyles = null;
+            _buttonStyles = null;
+            _descriptionStyles = null;
+            _textStyles = null;
 
-            _state = StickyNoteState.View;
+            _states = null;
         }
 
         internal void OnInspectorGUI()
@@ -90,92 +111,96 @@ namespace VIS.ObjectDescription.Editor
             if (_needToDrawBaseInspectorFunc())
                 _baseOnInspectorGUIAction();
 
-            _buttonStyle = new GUIStyle(GUI.skin.button);
-            _buttonStyle.normal.background = new Texture2D(1, 1);
-            _buttonStyle.active.background = new Texture2D(1, 1);
-
-            _mainStyle.normal.background.SetPixel(0, 0, _colorPropCache.colorValue);
-            _mainStyle.normal.background.Apply();
-            _headerStyle.normal.background.SetPixel(0, 0, _colorPropCache.colorValue * 0.9f);
-            _headerStyle.normal.background.Apply();
-            _buttonStyle.normal.background.SetPixel(0, 0, _colorPropCache.colorValue * 0.9f);
-            _buttonStyle.normal.background.Apply();
-            _buttonStyle.active.background.SetPixel(0, 0, _colorPropCache.colorValue * 0.9f);
-            _buttonStyle.active.background.Apply();
-
-            _textStyle.margin = new RectOffset(_contentMargin, _contentMargin, _contentMargin, _contentMargin);
-            var assumedTextRect = GUILayoutUtility.GetRect(new GUIContent(_textPropCache.stringValue), _textStyle, GUILayout.ExpandWidth(false));
-            var borderRect = assumedTextRect;
-            borderRect.x = _bodyPadding;
-            borderRect.width = EditorGUIUtility.currentViewWidth - _bodyPadding * 2f;
-            var otherStuff = GUILayoutUtility.GetRect(EditorGUIUtility.currentViewWidth - _bodyPadding * 2f, _contentMargin * 2f + _headerHeight);
-            borderRect.height += otherStuff.size.y;
-
-            var mainRect = borderRect;
-            mainRect.x += 1;
-            mainRect.y += 1 + _headerHeight;
-            mainRect.width -= 2;
-            mainRect.height -= 2 + _headerHeight;
-
-            var headerRect = mainRect;
-            headerRect.y -= _headerHeight;
-            headerRect.height = _headerHeight;
-
-            var descriptionRect = headerRect;
-            descriptionRect.x += _contentMargin;
-            descriptionRect.y += _contentMargin;
-            descriptionRect.height -= _contentMargin * 2;
-            descriptionRect.width -= _contentMargin * 4 + _editButtonWidth + _colorPickerWidth;
-
-            var editButtonRect = headerRect;
-            editButtonRect.x = editButtonRect.x + editButtonRect.width - _editButtonWidth - _contentMargin * 1;
-            editButtonRect.width = _editButtonWidth;
-            editButtonRect.y += _contentMargin;
-            editButtonRect.height -= _contentMargin * 2;
-
-            var colorPickerRect = headerRect;
-            colorPickerRect.x = colorPickerRect.x + colorPickerRect.width - _editButtonWidth - _colorPickerWidth - _contentMargin * 2;
-            colorPickerRect.width = _colorPickerWidth;
-            colorPickerRect.y += _contentMargin;
-            colorPickerRect.height -= _contentMargin * 2;
-
-            var textRect = mainRect;
-            textRect.x += _contentMargin;
-            textRect.y += _contentMargin;
-            textRect.height -= _contentMargin * 2;
-            textRect.width -= _contentMargin * 2;
-
-            switch (_state)
+            var count = _notesCountFunc();
+            for (int i = 0; i < count; i++)
             {
-                case StickyNoteState.View:
-                    GUI.Box(borderRect, string.Empty, _borderStyle);
-                    GUI.Box(mainRect, string.Empty, _mainStyle);
-                    GUI.Box(headerRect, string.Empty, _headerStyle);
+                _buttonStyles[i] = new GUIStyle(GUI.skin.button);
+                _buttonStyles[i].normal.background = new Texture2D(1, 1);
+                _buttonStyles[i].active.background = new Texture2D(1, 1);
 
-                    GUI.Label(textRect, _textPropCache.stringValue, _textStyle);
+                _mainStyles[i].normal.background.SetPixel(0, 0, _colorPropsCache[i].colorValue);
+                _mainStyles[i].normal.background.Apply();
+                _headerStyles[i].normal.background.SetPixel(0, 0, _colorPropsCache[i].colorValue * 0.9f);
+                _headerStyles[i].normal.background.Apply();
+                _buttonStyles[i].normal.background.SetPixel(0, 0, _colorPropsCache[i].colorValue * 0.9f);
+                _buttonStyles[i].normal.background.Apply();
+                _buttonStyles[i].active.background.SetPixel(0, 0, _colorPropsCache[i].colorValue * 0.9f);
+                _buttonStyles[i].active.background.Apply();
 
-                    GUI.Label(descriptionRect, _descriptionPropCache.stringValue, _descriptionStyle);
+                _textStyles[i].margin = new RectOffset(_contentMargin, _contentMargin, _contentMargin, _contentMargin);
+                var assumedTextRect = GUILayoutUtility.GetRect(new GUIContent(_textPropsCache[i].stringValue), _textStyles[i], GUILayout.ExpandWidth(false));
+                var borderRect = assumedTextRect;
+                borderRect.x = _bodyPadding;
+                borderRect.width = EditorGUIUtility.currentViewWidth - _bodyPadding * 2f;
+                var otherStuff = GUILayoutUtility.GetRect(EditorGUIUtility.currentViewWidth - _bodyPadding * 2f, _contentMargin * 2f + _headerHeight);
+                borderRect.height += otherStuff.size.y;
 
-                    if (GUI.Button(editButtonRect, "Edit", _buttonStyle))
-                        _state = StickyNoteState.Edit;
-                    break;
-                case StickyNoteState.Edit:
-                    GUI.Box(borderRect, string.Empty, _borderStyle);
-                    GUI.Box(mainRect, string.Empty, _mainStyle);
-                    GUI.Box(headerRect, string.Empty, _headerStyle);
+                var mainRect = borderRect;
+                mainRect.x += 1;
+                mainRect.y += 1 + _headerHeight;
+                mainRect.width -= 2;
+                mainRect.height -= 2 + _headerHeight;
 
-                    _textPropCache.stringValue = GUI.TextArea(textRect, _textPropCache.stringValue);
+                var headerRect = mainRect;
+                headerRect.y -= _headerHeight;
+                headerRect.height = _headerHeight;
 
-                    _colorPropCache.colorValue = EditorGUI.ColorField(colorPickerRect, GUIContent.none, _colorPropCache.colorValue, false, false, false);
-                    _descriptionPropCache.stringValue = GUI.TextField(descriptionRect, _descriptionPropCache.stringValue);
+                var descriptionRect = headerRect;
+                descriptionRect.x += _contentMargin;
+                descriptionRect.y += _contentMargin;
+                descriptionRect.height -= _contentMargin * 2;
+                descriptionRect.width -= _contentMargin * 4 + _editButtonWidth + _colorPickerWidth;
 
-                    _applyModifiedPropertiesAction();
+                var editButtonRect = headerRect;
+                editButtonRect.x = editButtonRect.x + editButtonRect.width - _editButtonWidth - _contentMargin * 1;
+                editButtonRect.width = _editButtonWidth;
+                editButtonRect.y += _contentMargin;
+                editButtonRect.height -= _contentMargin * 2;
 
-                    if (GUI.Button(editButtonRect, "Back", _buttonStyle))
-                        _state = StickyNoteState.View;
-                    break;
-                default:
-                    break;
+                var colorPickerRect = headerRect;
+                colorPickerRect.x = colorPickerRect.x + colorPickerRect.width - _editButtonWidth - _colorPickerWidth - _contentMargin * 2;
+                colorPickerRect.width = _colorPickerWidth;
+                colorPickerRect.y += _contentMargin;
+                colorPickerRect.height -= _contentMargin * 2;
+
+                var textRect = mainRect;
+                textRect.x += _contentMargin;
+                textRect.y += _contentMargin;
+                textRect.height -= _contentMargin * 2;
+                textRect.width -= _contentMargin * 2;
+
+                switch (_states[i])
+                {
+                    case StickyNoteState.View:
+                        GUI.Box(borderRect, string.Empty, _borderStyles[i]);
+                        GUI.Box(mainRect, string.Empty, _mainStyles[i]);
+                        GUI.Box(headerRect, string.Empty, _headerStyles[i]);
+
+                        GUI.Label(textRect, _textPropsCache[i].stringValue, _textStyles[i]);
+
+                        GUI.Label(descriptionRect, _descriptionPropsCache[i].stringValue, _descriptionStyles[i]);
+
+                        if (GUI.Button(editButtonRect, "Edit", _buttonStyles[i]))
+                            _states[i] = StickyNoteState.Edit;
+                        break;
+                    case StickyNoteState.Edit:
+                        GUI.Box(borderRect, string.Empty, _borderStyles[i]);
+                        GUI.Box(mainRect, string.Empty, _mainStyles[i]);
+                        GUI.Box(headerRect, string.Empty, _headerStyles[i]);
+
+                        _textPropsCache[i].stringValue = GUI.TextArea(textRect, _textPropsCache[i].stringValue);
+
+                        _colorPropsCache[i].colorValue = EditorGUI.ColorField(colorPickerRect, GUIContent.none, _colorPropsCache[i].colorValue, false, false, false);
+                        _descriptionPropsCache[i].stringValue = GUI.TextField(descriptionRect, _descriptionPropsCache[i].stringValue);
+
+                        _applyModifiedPropertiesAction(i);
+
+                        if (GUI.Button(editButtonRect, "Back", _buttonStyles[i]))
+                            _states[i] = StickyNoteState.View;
+                        break;
+                    default:
+                        break;
+                }
             }
         }
     }

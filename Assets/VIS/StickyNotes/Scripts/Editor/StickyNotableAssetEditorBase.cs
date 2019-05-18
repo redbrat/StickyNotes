@@ -7,14 +7,14 @@ namespace VIS.ObjectDescription.Editor
     {
         private SerializedObject _targetCache;
 
-        protected sealed override SerializedProperty findProperty(string propertyName)
+        protected sealed override SerializedProperty findProperty(int index, string propertyName)
         {
             if (_targetCache == null)
                 setRightTarget();
             return _targetCache.FindProperty(propertyName);
         }
 
-        protected override void applyModifiedProperties()
+        protected override void applyModifiedProperties(int index)
         {
             if (_targetCache == null)
                 setRightTarget();

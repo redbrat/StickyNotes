@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using VIS.ObjectDescription.Editor;
 using VIS.ObjectDescription.ScriptableObjects;
@@ -15,7 +16,8 @@ public class StickyNotableMaterialEditor : MaterialEditor, IAssetsStickedEventsL
                     base.OnInspectorGUI,
                     findProperty,
                     applyModifiedProperties,
-                    () => needToDrawBaseInspector
+                    () => needToDrawBaseInspector,
+                    () => _targetsCache.Length
                 );
 
             return _stickyNoteEditorBehaviourBackingField;
@@ -23,17 +25,17 @@ public class StickyNotableMaterialEditor : MaterialEditor, IAssetsStickedEventsL
     }
     private GenericStickyNoteEditorBehaviour _stickyNoteEditorBehaviourBackingField;
 
-    private SerializedObject _targetCache;
+    private SerializedObject[] _targetsCache;
 
     public override void OnEnable()
     {
         base.OnEnable();
 
-        if (_targetCache == null)
+        if (_targetsCache == null)
             setRightTarget();
 
         //Debug.Log($"Material OnEnable. _targetCache = {_targetCache}");
-        if (_targetCache != null)
+        if (_targetsCache != null)
             _stickyNoteEditorBehaviour.OnEnable();
     }
 
@@ -41,27 +43,27 @@ public class StickyNotableMaterialEditor : MaterialEditor, IAssetsStickedEventsL
     {
         base.OnEnable();
 
-        if (_targetCache != null)
+        if (_targetsCache != null)
             _stickyNoteEditorBehaviour.OnDisable();
     }
 
     public override void OnInspectorGUI()
     {
         //Debug.Log($"Material OnInspectorGUI. _targetCache = {_targetCache}");
-        if (_targetCache == null)
+        if (_targetsCache == null)
             base.OnInspectorGUI();
         else
             _stickyNoteEditorBehaviour.OnInspectorGUI();
     }
 
-    private SerializedProperty findProperty(string propertyName)
+    private SerializedProperty findProperty(int index, string propertyName)
     {
-        return _targetCache.FindProperty(propertyName);
+        return _targetsCache[index].FindProperty(propertyName);
     }
 
-    private void applyModifiedProperties()
+    private void applyModifiedProperties(int index)
     {
-        _targetCache.ApplyModifiedProperties();
+        _targetsCache[index].ApplyModifiedProperties();
     }
 
     private bool needToDrawBaseInspector => true;
@@ -69,16 +71,20 @@ public class StickyNotableMaterialEditor : MaterialEditor, IAssetsStickedEventsL
     private void setRightTarget()
     {
         var assetPath = AssetDatabase.GetAssetPath(target);
-        var asset = AssetDatabase.LoadAssetAtPath<StickyNote>(assetPath);
-        if (asset != null)
-            _targetCache = new SerializedObject(asset);
+        var assets = AssetDatabase.LoadAllAssetsAtPath(assetPath).Where(a => a is StickyNote).Select(a => a as StickyNote);
+        if (assets != null && assets.Count() > 0)
+            _targetsCache = assets.Select(a => new SerializedObject(a)).ToArray();
     }
 
-    public void OnSticked() => OnEnable();
+    public void OnSticked()
+    {
+        _targetsCache = null;
+        OnEnable();
+    }
 
     public void OnUnsticked()
     {
-        _targetCache = null;
+        _targetsCache = null;
         OnEnable();
     }
 }
