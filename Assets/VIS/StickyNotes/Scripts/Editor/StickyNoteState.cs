@@ -1,5 +1,8 @@
-﻿public enum StickyNoteState : byte
+﻿namespace VIS.ObjectDescription.Editor
 {
-    View,
-    Edit
+    public enum StickyNoteState : byte
+    {
+        View,
+        Edit
+    }
 }
