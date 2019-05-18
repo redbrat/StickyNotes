@@ -4,11 +4,11 @@ namespace VIS.ObjectDescription.StateMachineBehaviours
 {
     public class StickyNote : StateMachineBehaviour
     {
-        [SerializeField]
+        [SerializeField, HideInInspector]
         private string _headerText = "Description";
-        [SerializeField]
+        [SerializeField, HideInInspector]
         private string _text = "This is State!";
-        [SerializeField]
+        [SerializeField, HideInInspector]
         private Color _color = Color.yellow;
     }
 }
