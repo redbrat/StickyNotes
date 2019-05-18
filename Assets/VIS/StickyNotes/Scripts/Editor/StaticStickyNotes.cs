@@ -1,7 +1,9 @@
-﻿using UnityEditor;
+﻿using System.Linq;
+using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 using VIS.ObjectDescription.ScriptableObjects;
+using Object = UnityEngine.Object;
 
 namespace VIS.ObjectDescription.Editor
 {
@@ -19,6 +21,8 @@ namespace VIS.ObjectDescription.Editor
             //newStickyAsset.hideFlags = HideFlags.HideInHierarchy | HideFlags.HideInInspector | HideFlags.DontUnloadUnusedAsset;
             AssetDatabase.AddObjectToAsset(newStickyAsset, targetAsset);
             AssetDatabase.SaveAssets();
+
+            repaintStickyNotes();
         }
 
         [MenuItem(_addMenuPath, true)]
@@ -34,6 +38,8 @@ namespace VIS.ObjectDescription.Editor
             AssetDatabase.RemoveObjectFromAsset(targetAsset);
             AssetDatabase.SaveAssets();
             Object.DestroyImmediate(targetAsset);
+
+            repaintStickyNotes();
         }
 
         [MenuItem(_removeMenuPath, true)]
@@ -72,6 +78,14 @@ namespace VIS.ObjectDescription.Editor
                 return null;
 
             return selected[0];
+        }
+
+        private static void repaintStickyNotes()
+        {
+            var allEditors = Resources.FindObjectsOfTypeAll<UnityEditor.Editor>();
+            var listeners = allEditors.Where(o => o is IAssetsStickedEventsListener).Select(o => o as IAssetsStickedEventsListener).ToArray();
+            for (int i = 0; i < listeners.Length; i++)
+                listeners[i].OnSticked();
         }
     }
 }
