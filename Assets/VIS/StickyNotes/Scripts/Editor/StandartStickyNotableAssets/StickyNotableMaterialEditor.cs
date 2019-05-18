@@ -74,10 +74,11 @@ public class StickyNotableMaterialEditor : MaterialEditor, IAssetsStickedEventsL
             _targetCache = new SerializedObject(asset);
     }
 
-    public void OnSticked()
+    public void OnSticked() => OnEnable();
+
+    public void OnUnsticked()
     {
-        //Debug.Log($"OnSticked - Repaint");
+        _targetCache = null;
         OnEnable();
-        //Repaint();
     }
 }

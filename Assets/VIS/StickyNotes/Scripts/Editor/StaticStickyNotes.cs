@@ -22,7 +22,7 @@ namespace VIS.ObjectDescription.Editor
             AssetDatabase.AddObjectToAsset(newStickyAsset, targetAsset);
             AssetDatabase.SaveAssets();
 
-            repaintStickyNotes();
+            notifyOnStickNotes();
         }
 
         [MenuItem(_addMenuPath, true)]
@@ -39,7 +39,7 @@ namespace VIS.ObjectDescription.Editor
             AssetDatabase.SaveAssets();
             Object.DestroyImmediate(targetAsset);
 
-            repaintStickyNotes();
+            notifyOnUnstickNotes();
         }
 
         [MenuItem(_removeMenuPath, true)]
@@ -80,12 +80,20 @@ namespace VIS.ObjectDescription.Editor
             return selected[0];
         }
 
-        private static void repaintStickyNotes()
+        private static void notifyOnStickNotes()
         {
             var allEditors = Resources.FindObjectsOfTypeAll<UnityEditor.Editor>();
             var listeners = allEditors.Where(o => o is IAssetsStickedEventsListener).Select(o => o as IAssetsStickedEventsListener).ToArray();
             for (int i = 0; i < listeners.Length; i++)
                 listeners[i].OnSticked();
+        }
+
+        private static void notifyOnUnstickNotes()
+        {
+            var allEditors = Resources.FindObjectsOfTypeAll<UnityEditor.Editor>();
+            var listeners = allEditors.Where(o => o is IAssetsStickedEventsListener).Select(o => o as IAssetsStickedEventsListener).ToArray();
+            for (int i = 0; i < listeners.Length; i++)
+                listeners[i].OnUnsticked();
         }
     }
 }
