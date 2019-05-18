@@ -25,6 +25,8 @@ public class StickyNoteEditor : Editor
     private GUIStyle _descriptionStyle;
     private GUIStyle _textStyle;
 
+    private float _textAreaHeight;
+
     private void OnEnable()
     {
         _noteCache = target as StickyNote;
@@ -50,6 +52,7 @@ public class StickyNoteEditor : Editor
 
         _descriptionStyle.fontSize = 20;
         _textStyle.fontSize = 16;
+        _textStyle.wordWrap = true;
     }
 
     private void OnDisable()
@@ -88,7 +91,14 @@ public class StickyNoteEditor : Editor
 
         //var lastRect = GUILayoutUtility.GetLastRect();
 
-        var borderRect = GUILayoutUtility.GetRect(EditorGUIUtility.currentViewWidth - _bodyPadding * 2f, 100f);
+        var assumedTextRect = GUILayoutUtility.GetRect(new GUIContent(_textPropCache.stringValue), _textStyle);
+        //_textAreaHeight = assumedTextRect.y;
+        var borderRect = assumedTextRect;
+        borderRect.x = _bodyPadding;
+        borderRect.width = EditorGUIUtility.currentViewWidth - _bodyPadding * 2f;
+        var otherStuff = GUILayoutUtility.GetRect(EditorGUIUtility.currentViewWidth - _bodyPadding * 2f, _contentMargin * 2f + _headerHeight);
+        borderRect.height += otherStuff.size.y;
+        //var borderRect = GUILayoutUtility.GetRect(EditorGUIUtility.currentViewWidth - _bodyPadding * 2f, assumedTextRect.size.y + _contentMargin * 2f + _headerHeight);
 
         var mainRect = borderRect;
         mainRect.x += 1;
@@ -133,6 +143,11 @@ public class StickyNoteEditor : Editor
 
                 GUI.Label(textRect, _textPropCache.stringValue, _textStyle);
 
+                {
+                    //var lastRect = GUILayoutUtility.GetLastRect();
+                    //_textAreaHeight = lastRect.size.y;
+                }
+
                 GUI.Label(descriptionRect, _descriptionPropCache.stringValue, _descriptionStyle);
 
                 if (GUI.Button(editButtonRect, "Edit", _buttonStyle))
@@ -144,6 +159,11 @@ public class StickyNoteEditor : Editor
                 GUI.Box(headerRect, string.Empty, _headerStyle);
 
                 _textPropCache.stringValue = GUI.TextArea(textRect, _textPropCache.stringValue);
+
+                //{
+                //    var lastRect = GUILayoutUtility.GetLastRect();
+                //    _textAreaHeight = lastRect.size.y;
+                //}
 
                 _colorPropCache.colorValue = EditorGUI.ColorField(colorPickerRect, GUIContent.none, _colorPropCache.colorValue, false, false, false);
                 _descriptionPropCache.stringValue = GUI.TextField(descriptionRect, _descriptionPropCache.stringValue);
