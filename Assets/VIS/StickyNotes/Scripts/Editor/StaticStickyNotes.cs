@@ -20,6 +20,8 @@ namespace VIS.ObjectDescription.Editor
             newStickyAsset.name = "Note";
             //newStickyAsset.hideFlags = HideFlags.HideInHierarchy | HideFlags.HideInInspector | HideFlags.DontUnloadUnusedAsset;
             AssetDatabase.AddObjectToAsset(newStickyAsset, targetAsset);
+            EditorUtility.SetDirty(targetAsset);
+            //AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(newStickyAsset));
             AssetDatabase.SaveAssets();
 
             notifyOnStickNotes();
@@ -35,7 +37,12 @@ namespace VIS.ObjectDescription.Editor
         public static void RemoveStickyNoteFromAsset()
         {
             var targetAsset = getRemovableAsset();
+            var mainAsset = (Object)null;
+            if (AssetDatabase.IsSubAsset(targetAsset))
+                mainAsset = AssetDatabase.LoadMainAssetAtPath(AssetDatabase.GetAssetPath(targetAsset));
             AssetDatabase.RemoveObjectFromAsset(targetAsset);
+            Debug.Log($"mainAsset = {mainAsset.name} of type {mainAsset.GetType().FullName}");
+            EditorUtility.SetDirty(mainAsset);
             AssetDatabase.SaveAssets();
             Object.DestroyImmediate(targetAsset);
 
