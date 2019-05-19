@@ -2,6 +2,7 @@
 
 namespace VIS.ObjectDescription.ScriptableObjects
 {
+    [CreateAssetMenu(fileName = "Note", menuName = "VIS/Create Sticky Note", order = 0)]
     public class StickyNote : ScriptableObject
     {
         [SerializeField, HideInInspector]

@@ -1,6 +1,4 @@
 ﻿using System.Linq;
-//using System.Reflection;
-//using System.Reflection.Emit;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -11,50 +9,9 @@ namespace VIS.ObjectDescription.Editor
 {
     public static class StaticStickyNotes
     {
+        //private const string _createMenuPath = "Assets/VIS/Create Sticky Note";
         private const string _addMenuPath = "Assets/VIS/Add Sticky Note";
         private const string _removeMenuPath = "Assets/VIS/Remove Sticky Note";
-
-        //static StaticStickyNotes()
-        //{
-        //    Debug.Log($"StaticStickyNotes");
-        //    emit();
-        //}
-
-        //[MenuItem("Tools/Emit")]
-        //private static void emit()
-        //{
-        //    Debug.Log($"emit");
-        //    var assembly = typeof(UnityEditor.Editor).Assembly;
-        //    var allTypes = assembly.GetTypes();
-        //    for (int i = 0; i < allTypes.Length; i++)
-        //    {
-        //        switch (allTypes[i].FullName)
-        //        {
-        //            case "UnityEditor.RenderTextureEditor":
-        //                var tb = GetTypeBuilder();
-        //                var type = allTypes[i];
-        //                Debug.Log($"type.IsPublic = {type.IsPublic}  type.IsVisible = {type.IsVisible}");
-        //                break;
-        //        }
-        //    }
-        //}
-
-        //private static TypeBuilder GetTypeBuilder()
-        //{
-        //    var typeSignature = "MyDynamicType";
-        //    var an = new AssemblyName(typeSignature);
-        //    AssemblyBuilder assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(an, AssemblyBuilderAccess.Run);
-        //    ModuleBuilder moduleBuilder = assemblyBuilder.DefineDynamicModule("MainModule");
-        //    TypeBuilder tb = moduleBuilder.DefineType(typeSignature,
-        //            TypeAttributes.Public |
-        //            TypeAttributes.Class |
-        //            TypeAttributes.AutoClass |
-        //            TypeAttributes.AnsiClass |
-        //            TypeAttributes.BeforeFieldInit |
-        //            TypeAttributes.AutoLayout,
-        //            null);
-        //    return tb;
-        //}
 
         [MenuItem(_addMenuPath, false)]
         public static void AddStickyNoteToAsset()
@@ -62,10 +19,8 @@ namespace VIS.ObjectDescription.Editor
             var targetAsset = getAddableAsset();
             var newStickyAsset = ScriptableObject.CreateInstance<StickyNote>();
             newStickyAsset.name = "Note";
-            //newStickyAsset.hideFlags = HideFlags.HideInHierarchy | HideFlags.HideInInspector | HideFlags.DontUnloadUnusedAsset;
             AssetDatabase.AddObjectToAsset(newStickyAsset, targetAsset);
             EditorUtility.SetDirty(targetAsset);
-            //AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(newStickyAsset));
             AssetDatabase.SaveAssets();
 
             notifyOnStickNotes();
@@ -77,6 +32,20 @@ namespace VIS.ObjectDescription.Editor
             return getAddableAsset() != null;
         }
 
+        //[MenuItem(_createMenuPath, false)]
+        //public static void CreateNewStickyNote()
+        //{
+        //    var newStickyAsset = ScriptableObject.CreateInstance<StickyNote>();
+        //    newStickyAsset.name = "Note";
+        //    AssetDatabase.Sav
+        //}
+
+        //[MenuItem(_createMenuPath, true)]
+        //public static bool CreateNewStickyNoteValidation()
+        //{
+        //    return Selection.objects == null || Selection.objects.Length == 0;
+        //}
+
         [MenuItem(_removeMenuPath, false)]
         public static void RemoveStickyNoteFromAsset()
         {
@@ -85,7 +54,6 @@ namespace VIS.ObjectDescription.Editor
             if (AssetDatabase.IsSubAsset(targetAsset))
                 mainAsset = AssetDatabase.LoadMainAssetAtPath(AssetDatabase.GetAssetPath(targetAsset));
             AssetDatabase.RemoveObjectFromAsset(targetAsset);
-            Debug.Log($"mainAsset = {mainAsset.name} of type {mainAsset.GetType().FullName}");
             EditorUtility.SetDirty(mainAsset);
             AssetDatabase.SaveAssets();
             Object.DestroyImmediate(targetAsset);
