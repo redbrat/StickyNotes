@@ -55,7 +55,9 @@ namespace VIS.ObjectDescription.Editor
                 return null;
 
             var candidate = selected[0];
+#if StickyDebug
             Debug.Log($"candidate = {candidate.GetType().FullName}");
+#endif
 
             if (candidate is DefaultAsset || candidate is StickyNote || candidate is MonoScript || candidate is SceneAsset ||
                 candidate is Shader || candidate is AssemblyDefinitionAsset)

@@ -11,6 +11,7 @@ namespace VIS.ObjectDescription.Editor
         private const float _headerHeight = 30f;
         private const float _editButtonWidth = 60f;
         private const float _colorPickerWidth = 18f;
+        private const float _closeButtonWidth = 18f;
 
         private SerializedProperty[] _descriptionPropsCache;
         private SerializedProperty[] _textPropsCache;
@@ -28,6 +29,8 @@ namespace VIS.ObjectDescription.Editor
         private Action _baseOnInspectorGUIAction;
         private Func<int, string, SerializedProperty> _findPropertyFunc;
         private Action<int> _applyModifiedPropertiesAction;
+        private Func<int, bool> _needCloseButtonFunc;
+        private Action<int> _closeButtonCallbacks;
         private Func<bool> _needToDrawBaseInspectorFunc;
         private Func<int> _notesCountFunc;
 
@@ -35,6 +38,8 @@ namespace VIS.ObjectDescription.Editor
             Action baseOnInspectorGUIAction,
             Func<int, string, SerializedProperty> findPropertyFunc,
             Action<int> applyModifiedPropertiesAction,
+            Func<int, bool> needCloseButtonFunc,
+            Action<int> closeButtonCallbacks,
             Func<bool> needToDrawBaseInspectorFunc,
             Func<int> notesCountFunc)
         {
@@ -43,6 +48,8 @@ namespace VIS.ObjectDescription.Editor
             _applyModifiedPropertiesAction = applyModifiedPropertiesAction;
             _needToDrawBaseInspectorFunc = needToDrawBaseInspectorFunc;
             _notesCountFunc = notesCountFunc;
+            _needCloseButtonFunc = needCloseButtonFunc;
+            _closeButtonCallbacks = closeButtonCallbacks;
         }
 
         internal void OnEnable()
@@ -149,19 +156,23 @@ namespace VIS.ObjectDescription.Editor
                 descriptionRect.x += _contentMargin;
                 descriptionRect.y += _contentMargin;
                 descriptionRect.height -= _contentMargin * 2;
-                descriptionRect.width -= _contentMargin * 4 + _editButtonWidth + _colorPickerWidth;
+                descriptionRect.width -= _contentMargin * 4 + _editButtonWidth + _colorPickerWidth + (_needCloseButtonFunc(i) ? _closeButtonWidth + _contentMargin * 2f : 0);
 
                 var editButtonRect = headerRect;
-                editButtonRect.x = editButtonRect.x + editButtonRect.width - _editButtonWidth - _contentMargin * 1;
+                editButtonRect.x = editButtonRect.x + editButtonRect.width - _editButtonWidth - _contentMargin * 1 - (_needCloseButtonFunc(i) ? _closeButtonWidth + _contentMargin * 2f : 0);
                 editButtonRect.width = _editButtonWidth;
                 editButtonRect.y += _contentMargin;
                 editButtonRect.height -= _contentMargin * 2;
 
                 var colorPickerRect = headerRect;
-                colorPickerRect.x = colorPickerRect.x + colorPickerRect.width - _editButtonWidth - _colorPickerWidth - _contentMargin * 2;
+                colorPickerRect.x = colorPickerRect.x + colorPickerRect.width - _editButtonWidth - _colorPickerWidth - _contentMargin * 2 - (_needCloseButtonFunc(i) ? _closeButtonWidth + _contentMargin * 2f : 0);
                 colorPickerRect.width = _colorPickerWidth;
                 colorPickerRect.y += _contentMargin;
                 colorPickerRect.height -= _contentMargin * 2;
+
+                var closeButtonRect = editButtonRect;
+                closeButtonRect.width = _closeButtonWidth;
+                closeButtonRect.x += editButtonRect.width + _contentMargin;
 
                 var textRect = mainRect;
                 textRect.x += _contentMargin;
@@ -182,6 +193,9 @@ namespace VIS.ObjectDescription.Editor
 
                         if (GUI.Button(editButtonRect, "Edit", _buttonStyles[i]))
                             _states[i] = StickyNoteState.Edit;
+
+                        if (_needCloseButtonFunc(i) && GUI.Button(closeButtonRect, "x", _buttonStyles[i]))
+                            _closeButtonCallbacks?.Invoke(i);
                         break;
                     case StickyNoteState.Edit:
                         GUI.Box(borderRect, string.Empty, _borderStyles[i]);
@@ -197,6 +211,9 @@ namespace VIS.ObjectDescription.Editor
 
                         if (GUI.Button(editButtonRect, "Back", _buttonStyles[i]))
                             _states[i] = StickyNoteState.View;
+
+                        if (_needCloseButtonFunc(i) && GUI.Button(closeButtonRect, "x", _buttonStyles[i]))
+                            _closeButtonCallbacks?.Invoke(i);
                         break;
                     default:
                         break;
