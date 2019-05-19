@@ -3,7 +3,7 @@ using VIS.ObjectDescription.ScriptableObjects;
 
 namespace VIS.ObjectDescription.Editor
 {
-    public abstract class StickyNotableAssetEditorBase : StickyNoteEditorBase
+    internal abstract class StickyNotableAssetEditorBase : StickyNoteEditorBase
     {
         private SerializedObject _targetCache;
 
