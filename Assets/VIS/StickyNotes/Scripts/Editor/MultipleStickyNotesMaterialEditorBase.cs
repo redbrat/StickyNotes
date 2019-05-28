@@ -47,10 +47,10 @@ namespace VIS.ObjectDescription.Editor
 
         public override void OnDisable()
         {
-            base.OnEnable();
-
             if (_targetsCache != null)
                 _stickyNoteEditorBehaviour.OnDisable();
+
+            base.OnDisable();
         }
 
         public override void OnInspectorGUI()

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -83,14 +84,14 @@ namespace VIS.ObjectDescription.Editor
                 _colorPropsCache[i] = _findPropertyFunc(i, "_color");
 
                 _borderStyles[i] = new GUIStyle();
-                _borderStyles[i].normal.background = new Texture2D(1, 1);
+                _borderStyles[i].normal.background = registerDestroyableObject(new Texture2D(1, 1));
                 _borderStyles[i].normal.background.SetPixel(0, 0, Color.black);
                 _borderStyles[i].normal.background.Apply();
 
                 _mainStyles[i] = new GUIStyle();
-                _mainStyles[i].normal.background = new Texture2D(1, 1);
+                _mainStyles[i].normal.background = registerDestroyableObject(new Texture2D(1, 1));
                 _headerStyles[i] = new GUIStyle();
-                _headerStyles[i].normal.background = new Texture2D(1, 1);
+                _headerStyles[i].normal.background = registerDestroyableObject(new Texture2D(1, 1));
 
                 _descriptionStyles[i] = new GUIStyle();
                 _textStyles[i] = new GUIStyle();
@@ -104,8 +105,19 @@ namespace VIS.ObjectDescription.Editor
             }
         }
 
+        private List<Object> _destroyable = new List<Object>();
+        private T registerDestroyableObject<T>(T obj) where T: Object
+        {
+            _destroyable.Add(obj);
+            return obj;
+        }
+
         internal void OnDisable()
         {
+            for (int i = 0; i < _destroyable.Count; i++)
+                Object.DestroyImmediate(_destroyable[i]);
+            _destroyable.Clear();
+
             _textPropsCache = null;
             _colorPropsCache = null;
             _descriptionPropsCache = null;
@@ -129,8 +141,8 @@ namespace VIS.ObjectDescription.Editor
             for (int i = 0; i < count; i++)
             {
                 _buttonStyles[i] = new GUIStyle(GUI.skin.button);
-                _buttonStyles[i].normal.background = new Texture2D(1, 1);
-                _buttonStyles[i].active.background = new Texture2D(1, 1);
+                _buttonStyles[i].normal.background = registerDestroyableObject(new Texture2D(1, 1));
+                _buttonStyles[i].active.background = registerDestroyableObject(new Texture2D(1, 1));
 
                 _mainStyles[i].normal.background.SetPixel(0, 0, _colorPropsCache[i].colorValue);
                 _mainStyles[i].normal.background.Apply();
