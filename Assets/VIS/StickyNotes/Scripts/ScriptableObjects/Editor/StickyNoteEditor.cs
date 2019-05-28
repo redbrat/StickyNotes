@@ -9,11 +9,7 @@ namespace VIS.ObjectDescription.ScriptableObjects.Editor
     {
         public override Texture2D RenderStaticPreview(string assetPath, Object[] subAssets, int width, int height)
         {
-            var tex = Instantiate(Resources.Load<Texture2D>("VIS/StickyNotes/Textures/note-icon"));
-            Debug.Log($"tex = {tex}. {width}, {height}");
-            //tex.SetPixel(0, 0, Color.yellow);
-            //tex.Apply();
-            return tex;
+            return Instantiate(Resources.Load<Texture2D>("VIS/StickyNotes/Textures/note-icon"));
         }
 
         protected override Object getTarget(int index) => target;
