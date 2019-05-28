@@ -1,5 +1,8 @@
-﻿public interface IAssetsStickedEventsListener
+﻿namespace VIS.ObjectDescription.Editor
 {
-    void OnSticked();
-    void OnUnsticked();
+    public interface IAssetsStickedEventsListener
+    {
+        void OnSticked();
+        void OnUnsticked();
+    }
 }

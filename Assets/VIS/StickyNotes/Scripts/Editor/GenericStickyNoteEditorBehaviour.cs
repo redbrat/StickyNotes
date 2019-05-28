@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace VIS.ObjectDescription.Editor
 {
@@ -33,6 +34,8 @@ namespace VIS.ObjectDescription.Editor
         private Action<int> _closeButtonCallbacks;
         private Func<bool> _needToDrawBaseInspectorFunc;
         private Func<int> _notesCountFunc;
+        private Func<int, Object> _getTargetFunc;
+        private Action _repaintAction;
 
         internal GenericStickyNoteEditorBehaviour(
             Action baseOnInspectorGUIAction,
@@ -41,7 +44,9 @@ namespace VIS.ObjectDescription.Editor
             Func<int, bool> needCloseButtonFunc,
             Action<int> closeButtonCallbacks,
             Func<bool> needToDrawBaseInspectorFunc,
-            Func<int> notesCountFunc)
+            Func<int> notesCountFunc,
+            Func<int, Object> getTargetFunc,
+            Action repaintAction)
         {
             _baseOnInspectorGUIAction = baseOnInspectorGUIAction;
             _findPropertyFunc = findPropertyFunc;
@@ -50,6 +55,8 @@ namespace VIS.ObjectDescription.Editor
             _notesCountFunc = notesCountFunc;
             _needCloseButtonFunc = needCloseButtonFunc;
             _closeButtonCallbacks = closeButtonCallbacks;
+            _getTargetFunc = getTargetFunc;
+            _repaintAction = repaintAction;
         }
 
         internal void OnEnable()
@@ -180,6 +187,8 @@ namespace VIS.ObjectDescription.Editor
                 textRect.height -= _contentMargin * 2;
                 textRect.width -= _contentMargin * 2;
 
+                var e = Event.current;
+
                 switch (_states[i])
                 {
                     case StickyNoteState.View:
@@ -196,6 +205,17 @@ namespace VIS.ObjectDescription.Editor
 
                         if (_needCloseButtonFunc(i) && GUI.Button(closeButtonRect, "x", _buttonStyles[i]))
                             _closeButtonCallbacks?.Invoke(i);
+
+                        if (e.modifiers == EventModifiers.Control || e.modifiers == EventModifiers.Command)
+                        {
+                            switch (e.keyCode)
+                            {
+                                case KeyCode.E:
+                                    _states[i] = StickyNoteState.Edit;
+                                    _repaintAction();
+                                    break;
+                            }
+                        }
                         break;
                     case StickyNoteState.Edit:
                         GUI.Box(borderRect, string.Empty, _borderStyles[i]);
@@ -214,9 +234,49 @@ namespace VIS.ObjectDescription.Editor
 
                         if (_needCloseButtonFunc(i) && GUI.Button(closeButtonRect, "x", _buttonStyles[i]))
                             _closeButtonCallbacks?.Invoke(i);
+
+                        if (e.modifiers == EventModifiers.Control || e.modifiers == EventModifiers.Command)
+                        {
+                            switch (e.keyCode)
+                            {
+                                case KeyCode.Return:
+                                case KeyCode.KeypadEnter:
+                                    _states[i] = StickyNoteState.View;
+                                    _repaintAction();
+                                    break;
+                            }
+                        }
                         break;
-                    default:
-                        break;
+                }
+
+                var target = _getTargetFunc(i);
+                //if (target == null)
+                //    Debug.Log("target == null");
+                //else
+                //    Debug.Log($"target = type {target.GetType().FullName}, name {target.name}");
+                if (target != null)
+                {
+                    if (target is Component)
+                        UnityEditorInternal.ComponentUtility.MoveComponentDown(target as Component);
+                    //else if (target is StateMachineBehaviour) //Эта фигня не работает, а отдельной Utility для StateMachineBehaviour'в нет
+                    //{
+                    //    Debug.Log($"StateMachinBeh. {target.name}");
+                    //    var smb = target as StateMachineBehaviour;
+                    //    var path = AssetDatabase.GetAssetPath(smb);
+                    //    var mainAsset = AssetDatabase.LoadMainAssetAtPath(path);
+                    //    var allSubAssets = AssetDatabase.LoadAllAssetsAtPath(path);
+                    //    for (int j = 0; j < allSubAssets.Length; j++)
+                    //    {
+                    //        if (allSubAssets[j] == smb && j != allSubAssets.Length - 1)
+                    //        {
+                    //            AssetDatabase.RemoveObjectFromAsset(smb);
+                    //            AssetDatabase.AddObjectToAsset(smb, mainAsset);
+                    //            EditorUtility.SetDirty(mainAsset);
+                    //            AssetDatabase.SaveAssets();
+                    //            break;
+                    //        }
+                    //    }
+                    //}
                 }
             }
         }

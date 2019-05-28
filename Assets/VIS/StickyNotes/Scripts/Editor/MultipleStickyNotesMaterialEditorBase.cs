@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
 using UnityEditor;
+using UnityEngine;
 using VIS.ObjectDescription.ScriptableObjects;
+using Object = UnityEngine.Object;
 
 namespace VIS.ObjectDescription.Editor
 {
@@ -19,7 +21,9 @@ namespace VIS.ObjectDescription.Editor
                         needCloseButton,
                         closeButtonCallback,
                         () => needToDrawBaseInspector,
-                        () => _targetsCache.Length
+                        () => _targetsCache.Length,
+                        getTarget,
+                        Repaint
                     );
 
                 return _stickyNoteEditorBehaviourBackingField;
@@ -93,6 +97,7 @@ namespace VIS.ObjectDescription.Editor
         }
 
         protected virtual bool needCloseButton(int index) => true;
+        protected virtual Object getTarget(int index) => null;
 
         protected virtual Action<int> closeButtonCallback => index =>
         {
