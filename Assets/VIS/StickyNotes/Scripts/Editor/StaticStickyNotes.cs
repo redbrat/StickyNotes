@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -9,9 +10,29 @@ namespace VIS.ObjectDescription.Editor
 {
     public static class StaticStickyNotes
     {
-        //private const string _createMenuPath = "Assets/VIS/Create Sticky Note";
+        private const string _createMenuPath = "Assets/VIS/Create";
         private const string _addMenuPath = "Assets/VIS/Add Sticky Note";
         private const string _removeMenuPath = "Assets/VIS/Remove Sticky Note";
+
+        [MenuItem(_createMenuPath, false)]
+        public static void CreateNew()
+        {
+            var path = default(string);
+            var obj = Selection.activeObject;
+            if (obj == null)
+                path = "Assets";
+            else
+                path = AssetDatabase.GetAssetPath(obj.GetInstanceID());
+            var newNote = ScriptableObject.CreateInstance<StickyNote>();
+            ProjectWindowUtil.CreateAsset(newNote, Path.Combine(path, "Note.asset"));
+            AssetDatabase.SaveAssets();
+        }
+
+        [MenuItem(_createMenuPath, true)]
+        public static bool CreateNewValidation()
+        {
+            return Selection.activeObject != null && Selection.activeObject is DefaultAsset;
+        }
 
         [MenuItem(_addMenuPath, false)]
         public static void AddStickyNoteToAsset()
@@ -77,7 +98,7 @@ namespace VIS.ObjectDescription.Editor
 #if StickyDebug
             Debug.Log($"candidate = {candidate.GetType().FullName}");
 #endif
-            
+
             if (candidate is DefaultAsset || candidate is StickyNote || candidate is MonoScript || candidate is SceneAsset ||
                 candidate is Shader || candidate is AssemblyDefinitionAsset)
                 return null;

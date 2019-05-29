@@ -3,6 +3,6 @@ using UnityEngine;
 
 namespace VIS.ObjectDescription.Editor.StandartStickyNotableAssets
 {
-    [CustomEditor(typeof(Material))]
+    //[CustomEditor(typeof(Material))]
     public class StickyNotableMaterialEditor : MultipleStickyNotesMaterialEditorBase { }
 }
