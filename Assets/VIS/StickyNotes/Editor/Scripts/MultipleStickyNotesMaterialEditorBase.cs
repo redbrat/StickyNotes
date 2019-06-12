@@ -107,7 +107,11 @@ namespace VIS.ObjectDescription.Editor
             {
                 if (assets[i] == _targetsCache[index].targetObject)
                 {
-                    AssetDatabase.RemoveObjectFromAsset(assets[i]);
+                    var path = AssetDatabase.GetAssetPath(assets[i]);
+                    DestroyImmediate(assets[i], true);
+                    AssetDatabase.ImportAsset(path);
+                    //AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(assets[i]));
+                    //AssetDatabase.RemoveObjectFromAsset(assets[i]);
                     AssetDatabase.SaveAssets();
                     OnUnsticked();
                     break;

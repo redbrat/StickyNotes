@@ -39,8 +39,8 @@ namespace VIS.ObjectDescription.Editor
         private Func<int, Object> _getTargetFunc;
         private Action _repaintAction;
 
-        private readonly GUISkin _skin;
-        private readonly Texture _closeTexture;
+        private GUISkin _skin;
+        private Texture _closeTexture;
 
         internal GenericStickyNoteEditorBehaviour(
             Action baseOnInspectorGUIAction,
@@ -111,7 +111,7 @@ namespace VIS.ObjectDescription.Editor
         }
 
         private List<Object> _destroyable = new List<Object>();
-        private T registerDestroyableObject<T>(T obj) where T: Object
+        private T registerDestroyableObject<T>(T obj) where T : Object
         {
             _destroyable.Add(obj);
             return obj;
@@ -134,6 +134,8 @@ namespace VIS.ObjectDescription.Editor
             _descriptionStyles = null;
             _labelStyles = null;
             _textAreaStyles = null;
+            _skin = null;
+            _closeTexture = null;
 
             _states = null;
         }
@@ -143,6 +145,8 @@ namespace VIS.ObjectDescription.Editor
             if (_needToDrawBaseInspectorFunc())
                 _baseOnInspectorGUIAction();
 
+            if (_skin == null)
+                return;
             var count = _notesCountFunc();
             for (int i = 0; i < count; i++)
             {
@@ -245,7 +249,7 @@ namespace VIS.ObjectDescription.Editor
 
                         _textPropsCache[i].stringValue = GUI.TextArea(textRect, _textPropsCache[i].stringValue, _textAreaStyles[i]);
 
-                        _colorPropsCache[i].colorValue = EditorGUI.ColorField(colorPickerRect, GUIContent.none, _colorPropsCache[i].colorValue, false, false, false);
+                        _colorPropsCache[i].colorValue = EditorGUI.ColorField(colorPickerRect, GUIContent.none, _colorPropsCache[i].colorValue, false, false, false, new ColorPickerHDRConfig(0, 0, 0, 0));
                         _descriptionPropsCache[i].stringValue = GUI.TextField(descriptionRect, _descriptionPropsCache[i].stringValue, _textAreaStyles[i]);
 
                         _applyModifiedPropertiesAction(i);

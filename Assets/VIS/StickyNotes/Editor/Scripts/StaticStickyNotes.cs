@@ -74,7 +74,11 @@ namespace VIS.ObjectDescription.Editor
             var mainAsset = (Object)null;
             if (AssetDatabase.IsSubAsset(targetAsset))
                 mainAsset = AssetDatabase.LoadMainAssetAtPath(AssetDatabase.GetAssetPath(targetAsset));
-            AssetDatabase.RemoveObjectFromAsset(targetAsset);
+            var path = AssetDatabase.GetAssetPath(targetAsset);
+            Object.DestroyImmediate(targetAsset, true);
+            AssetDatabase.ImportAsset(path);
+            //AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(targetAsset));
+            //AssetDatabase.RemoveObjectFromAsset(targetAsset);
             EditorUtility.SetDirty(mainAsset);
             AssetDatabase.SaveAssets();
             Object.DestroyImmediate(targetAsset);
