@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace VIS.ObjectDescription.Editor
+namespace VIS.StickyNotes.Editor
 {
     internal class GenericStickyNoteEditorBehaviour
     {
@@ -28,6 +28,8 @@ namespace VIS.ObjectDescription.Editor
         private GUIStyle[] _descriptionStyles;
         private GUIStyle[] _labelStyles;
         private GUIStyle[] _textAreaStyles;
+
+        private Rect[] _rects;
 
         private Action _baseOnInspectorGUIAction;
         private Func<int, string, SerializedProperty> _findPropertyFunc;
@@ -85,6 +87,8 @@ namespace VIS.ObjectDescription.Editor
             _labelStyles = new GUIStyle[count];
             _textAreaStyles = new GUIStyle[count];
 
+            _rects = new Rect[count];
+
             _states = new StickyNoteState[count];
 
             for (int i = 0; i < count; i++)
@@ -140,13 +144,14 @@ namespace VIS.ObjectDescription.Editor
             _closeTexture = null;
 
             _states = null;
+            _rects = null;
         }
 
         internal void OnInspectorGUI()
         {
             if (_needToDrawBaseInspectorFunc())
                 _baseOnInspectorGUIAction();
-
+            
             if (_skin == null)
                 return;
             var count = _notesCountFunc();
@@ -168,9 +173,12 @@ namespace VIS.ObjectDescription.Editor
                 _buttonStyles[i].hover.background.SetPixel(0, 0, _colorPropsCache[i].colorValue * 0.7f);
                 _buttonStyles[i].hover.background.Apply();
 
-                _labelStyles[i].margin = new RectOffset(_contentMargin, _contentMargin, _contentMargin, _contentMargin);
-                var assumedTextRect = GUILayoutUtility.GetRect(new GUIContent(_textPropsCache[i].stringValue), _labelStyles[i], GUILayout.ExpandWidth(false));
-                var borderRect = assumedTextRect;
+                _labelStyles[i].margin = new RectOffset(_contentMargin * 2, _contentMargin * 2, _contentMargin, _contentMargin);
+
+                //if (Event.current.type == EventType.Repaint)
+                //    _rects[i] = GUILayoutUtility.GetRect(new GUIContent(_textPropsCache[i].stringValue), _labelStyles[i], GUILayout.ExpandWidth(false));
+
+                var borderRect = GUILayoutUtility.GetRect(new GUIContent(_textPropsCache[i].stringValue), _labelStyles[i], GUILayout.ExpandWidth(false));
                 borderRect.x = _bodyPadding;
                 borderRect.width = EditorGUIUtility.currentViewWidth - _bodyPadding * 2f;
                 var otherStuff = GUILayoutUtility.GetRect(EditorGUIUtility.currentViewWidth - _bodyPadding * 2f, _contentMargin * 2f + _headerHeight);
@@ -249,17 +257,17 @@ namespace VIS.ObjectDescription.Editor
                         GUI.Box(mainRect, string.Empty, _mainStyles[i]);
                         GUI.Box(headerRect, string.Empty, _headerStyles[i]);
 
-                        _textPropsCache[i].stringValue = GUI.TextArea(textRect, _textPropsCache[i].stringValue, _textAreaStyles[i]);
+                        _textPropsCache[i].stringValue = EditorGUI.TextArea(textRect, _textPropsCache[i].stringValue, _textAreaStyles[i]);
 
                         _colorPropsCache[i].colorValue = EditorGUI.ColorField(colorPickerRect, GUIContent.none, _colorPropsCache[i].colorValue, false, false, false, new ColorPickerHDRConfig(0, 0, 0, 0));
-                        _descriptionPropsCache[i].stringValue = GUI.TextField(descriptionRect, _descriptionPropsCache[i].stringValue, _textAreaStyles[i]);
+                        _descriptionPropsCache[i].stringValue = EditorGUI.TextField(descriptionRect, _descriptionPropsCache[i].stringValue, _textAreaStyles[i]);
 
                         _applyModifiedPropertiesAction(i);
 
                         if (GUI.Button(editButtonRect, "Back", _buttonStyles[i]))
                             _states[i] = StickyNoteState.View;
 
-                        if (_needCloseButtonFunc(i) && GUI.Button(closeButtonRect, "x", _buttonStyles[i]))
+                        if (_needCloseButtonFunc(i) && GUI.Button(closeButtonRect, new GUIContent(_closeTexture, "Remove note"), _buttonStyles[i]))
                             _closeButtonCallbacks?.Invoke(i);
 
                         if (e.modifiers == EventModifiers.Control || e.modifiers == EventModifiers.Command)

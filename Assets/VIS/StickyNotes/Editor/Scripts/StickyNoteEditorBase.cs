@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace VIS.ObjectDescription.Editor
+namespace VIS.StickyNotes.Editor
 {
     public abstract class StickyNoteEditorBase : UnityEditor.Editor
     {

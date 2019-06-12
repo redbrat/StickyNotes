@@ -1,8 +1,8 @@
 ﻿using UnityEditor;
 using UnityEngine;
-using VIS.ObjectDescription.Editor;
+using VIS.StickyNotes.Editor;
 
-namespace VIS.ObjectDescription.ScriptableObjects.Editor
+namespace VIS.StickyNotes.ScriptableObjects.Editor
 {
     [CustomEditor(typeof(StickyNote))]
     public sealed class StickyNoteEditor : StickyNoteEditorBase

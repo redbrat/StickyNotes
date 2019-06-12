@@ -2,7 +2,7 @@
 using UnityEditor.Animations;
 using UnityEngine;
 
-namespace VIS.ObjectDescription.Editor.StandartStickyNotableAssets
+namespace VIS.StickyNotes.Editor.StandartStickyNotableAssets
 {
     [CustomEditor(typeof(AnimatorController))]
     public class StickyNotableAnimatorControllerEditor : MultipleStickyNotesEditorBase

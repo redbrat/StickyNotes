@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace VIS.ObjectDescription.MonoBehaviours
+namespace VIS.StickyNotes.MonoBehaviours
 {
     public class StickyNote : MonoBehaviour
     {

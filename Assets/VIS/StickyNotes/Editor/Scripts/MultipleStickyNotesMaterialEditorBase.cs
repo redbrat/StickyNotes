@@ -2,10 +2,10 @@
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using VIS.ObjectDescription.ScriptableObjects;
+using VIS.StickyNotes.ScriptableObjects;
 using Object = UnityEngine.Object;
 
-namespace VIS.ObjectDescription.Editor
+namespace VIS.StickyNotes.Editor
 {
     public abstract class MultipleStickyNotesMaterialEditorBase : MaterialEditor, IAssetsStickedEventsListener
     {

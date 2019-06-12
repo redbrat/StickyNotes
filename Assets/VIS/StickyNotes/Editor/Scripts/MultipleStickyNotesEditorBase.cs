@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Linq;
 using UnityEditor;
-using UnityEngine;
-using VIS.ObjectDescription.ScriptableObjects;
+using VIS.StickyNotes.ScriptableObjects;
 using Object = UnityEngine.Object;
 
-namespace VIS.ObjectDescription.Editor
+namespace VIS.StickyNotes.Editor
 {
     public abstract class MultipleStickyNotesEditorBase : UnityEditor.Editor, IAssetsStickedEventsListener
     {
@@ -21,7 +20,7 @@ namespace VIS.ObjectDescription.Editor
                         needCloseButton,
                         closeButtonCallback,
                         () => needToDrawBaseInspector,
-                        () => _targetsCache.Length,
+                        getNotesCount,
                         getTarget,
                         Repaint
                     );
@@ -29,6 +28,7 @@ namespace VIS.ObjectDescription.Editor
                 return _stickyNoteEditorBehaviourBackingField;
             }
         }
+
         private GenericStickyNoteEditorBehaviour _stickyNoteEditorBehaviourBackingField;
 
         protected SerializedObject[] _targetsCache;
@@ -36,9 +36,8 @@ namespace VIS.ObjectDescription.Editor
         public void OnEnable()
         {
             if (_targetsCache == null)
-                setRightTarget();
+                _targetsCache = setTargets();
 
-            //Debug.Log($"Material OnEnable. _targetCache = {_targetCache}");
             if (_targetsCache != null)
                 _stickyNoteEditorBehaviour.OnEnable();
         }
@@ -51,19 +50,18 @@ namespace VIS.ObjectDescription.Editor
 
         public override void OnInspectorGUI()
         {
-            //Debug.Log($"Material OnInspectorGUI. _targetCache = {_targetCache}");
             if (_targetsCache == null)
                 base.OnInspectorGUI();
             else
                 _stickyNoteEditorBehaviour.OnInspectorGUI();
         }
 
-        private SerializedProperty findProperty(int index, string propertyName)
+        protected virtual SerializedProperty findProperty(int index, string propertyName)
         {
             return _targetsCache[index].FindProperty(propertyName);
         }
 
-        private void applyModifiedProperties(int index)
+        protected virtual void applyModifiedProperties(int index)
         {
             _targetsCache[index].ApplyModifiedProperties();
         }
@@ -71,12 +69,14 @@ namespace VIS.ObjectDescription.Editor
         private bool needToDrawBaseInspector => true;
         protected virtual Object getTarget(int index) => null;
 
-        private void setRightTarget()
+        protected virtual SerializedObject[] setTargets()
         {
             var assetPath = AssetDatabase.GetAssetPath(target);
             var assets = AssetDatabase.LoadAllAssetsAtPath(assetPath).Where(a => a is StickyNote).Select(a => a as StickyNote);
             if (assets != null && assets.Count() > 0)
-                _targetsCache = assets.Select(a => new SerializedObject(a)).ToArray();
+                return assets.Select(a => new SerializedObject(a)).ToArray();
+            else
+                return null;
         }
 
         public void OnSticked()
@@ -94,6 +94,11 @@ namespace VIS.ObjectDescription.Editor
         }
 
         protected virtual bool needCloseButton(int index) => true;
+
+        protected virtual int getNotesCount()
+        {
+            return _targetsCache.Length;
+        }
 
         protected virtual Action<int> closeButtonCallback => index =>
         {

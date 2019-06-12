@@ -3,10 +3,10 @@ using System.Linq;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
-using VIS.ObjectDescription.ScriptableObjects;
+using VIS.StickyNotes.ScriptableObjects;
 using Object = UnityEngine.Object;
 
-namespace VIS.ObjectDescription.Editor
+namespace VIS.StickyNotes.Editor
 {
     public static class StaticStickyNotes
     {

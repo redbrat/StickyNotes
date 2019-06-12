@@ -1,4 +1,4 @@
-﻿namespace VIS.ObjectDescription.Editor
+﻿namespace VIS.StickyNotes.Editor
 {
     public interface IAssetsStickedEventsListener
     {

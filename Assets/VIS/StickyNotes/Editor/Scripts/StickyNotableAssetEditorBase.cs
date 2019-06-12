@@ -1,9 +1,9 @@
 ﻿using UnityEditor;
-using VIS.ObjectDescription.ScriptableObjects;
+using VIS.StickyNotes.ScriptableObjects;
 
-namespace VIS.ObjectDescription.Editor
+namespace VIS.StickyNotes.Editor
 {
-    internal abstract class StickyNotableAssetEditorBase : StickyNoteEditorBase
+    public abstract class StickyNotableAssetEditorBase : StickyNoteEditorBase
     {
         private SerializedObject _targetCache;
 

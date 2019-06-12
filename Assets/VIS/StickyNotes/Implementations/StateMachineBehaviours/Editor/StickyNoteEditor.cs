@@ -1,8 +1,8 @@
 ﻿using UnityEditor;
 using UnityEngine;
-using VIS.ObjectDescription.Editor;
+using VIS.StickyNotes.Editor;
 
-namespace VIS.ObjectDescription.MonoBehaviours.Editor
+namespace VIS.StickyNotes.StateMachineBehaviours.Editor
 {
     [CustomEditor(typeof(StickyNote))]
     public sealed class StickyNoteEditor : StickyNoteEditorBase
