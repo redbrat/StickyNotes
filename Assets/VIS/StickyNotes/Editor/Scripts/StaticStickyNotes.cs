@@ -79,9 +79,12 @@ namespace VIS.ObjectDescription.Editor
             AssetDatabase.ImportAsset(path);
             //AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(targetAsset));
             //AssetDatabase.RemoveObjectFromAsset(targetAsset);
-            EditorUtility.SetDirty(mainAsset);
+            if (mainAsset != null)
+                EditorUtility.SetDirty(mainAsset);
+            else
+                AssetDatabase.DeleteAsset(path);
             AssetDatabase.SaveAssets();
-            Object.DestroyImmediate(targetAsset);
+            //Object.DestroyImmediate(targetAsset);
 
             notifyOnUnstickNotes();
         }

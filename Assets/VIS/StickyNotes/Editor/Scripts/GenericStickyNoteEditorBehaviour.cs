@@ -69,6 +69,8 @@ namespace VIS.ObjectDescription.Editor
 
         internal void OnEnable()
         {
+            if (_skin == null)
+                return;
             var count = _notesCountFunc();
 
             _descriptionPropsCache = new SerializedProperty[count];
