@@ -21,7 +21,8 @@ namespace VIS.StickyNotes.Editor
                         () => needToDrawBaseInspector,
                         () => 1,
                         getTarget,
-                        Repaint
+                        Repaint,
+                        getSerializedObject
                     );
 
                 return _stickyNoteEditorBehaviourBackingField;
@@ -50,5 +51,6 @@ namespace VIS.StickyNotes.Editor
         protected virtual bool needCloseButton(int index) => false;
         protected virtual Action<int> closeButtonCallback => null;
         protected virtual Object getTarget(int index) => null;
+        protected virtual Func<int, SerializedObject> getSerializedObject => null;
     }
 }

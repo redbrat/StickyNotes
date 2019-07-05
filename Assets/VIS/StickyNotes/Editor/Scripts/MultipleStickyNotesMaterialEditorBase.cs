@@ -23,7 +23,8 @@ namespace VIS.StickyNotes.Editor
                         () => needToDrawBaseInspector,
                         () => _targetsCache.Length,
                         getTarget,
-                        Repaint
+                        Repaint,
+                        getSerializedObject
                     );
 
                 return _stickyNoteEditorBehaviourBackingField;
@@ -118,5 +119,7 @@ namespace VIS.StickyNotes.Editor
                 }
             }
         };
+
+        protected virtual Func<int, SerializedObject> getSerializedObject => (index) => _targetsCache[index];
     }
 }

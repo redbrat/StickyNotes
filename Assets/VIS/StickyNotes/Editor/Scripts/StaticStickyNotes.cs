@@ -10,9 +10,9 @@ namespace VIS.StickyNotes.Editor
 {
     public static class StaticStickyNotes
     {
-        private const string _createMenuPath = "Assets/VIS/Create";
-        private const string _addMenuPath = "Assets/VIS/Add Sticky Note";
-        private const string _removeMenuPath = "Assets/VIS/Remove Sticky Note";
+        private const string _createMenuPath = "Assets/Vis/StickyNotes/Create";
+        private const string _addMenuPath = "Assets/Vis/StickyNotes/Add Sticky Note";
+        private const string _removeMenuPath = "Assets/Vis/StickyNotes/Remove Sticky Note";
 
         [MenuItem(_createMenuPath, false)]
         public static void CreateNew()

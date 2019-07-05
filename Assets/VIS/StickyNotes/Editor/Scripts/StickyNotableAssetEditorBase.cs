@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System;
+using UnityEditor;
 using VIS.StickyNotes.ScriptableObjects;
 
 namespace VIS.StickyNotes.Editor
