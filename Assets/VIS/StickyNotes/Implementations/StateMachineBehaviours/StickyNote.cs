@@ -5,6 +5,7 @@ namespace VIS.StickyNotes.StateMachineBehaviours
 {
     public class StickyNote : StateMachineBehaviour, IStickyNote
     {
+#pragma warning disable
         public event Action<StickyNote, string> ConsoleTextEntered;
 
         [SerializeField, HideInInspector]
@@ -16,6 +17,7 @@ namespace VIS.StickyNotes.StateMachineBehaviours
 
         [SerializeField, HideInInspector]
         private string _consoleText;
+#pragma warning enable
 
 
         [SerializeField, HideInInspector]
@@ -60,6 +62,19 @@ namespace VIS.StickyNotes.StateMachineBehaviours
             _text = default(string);
 #endif
         }
+
+#if UNITY_EDITOR
+        public void TriggerConsoleTextEntered(string text)
+        {
+            ConsoleTextEntered?.Invoke(this, text);
+        }
+#endif
+
+
+
+
+
+
 
         [ContextMenu("Console mode")]
         private void consoleMode() => _mode = StickyNoteMode.Console;

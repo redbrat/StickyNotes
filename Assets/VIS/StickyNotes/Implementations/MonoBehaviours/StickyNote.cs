@@ -5,6 +5,7 @@ namespace VIS.StickyNotes.MonoBehaviours
 {
     public class StickyNote : MonoBehaviour, IStickyNote
     {
+#pragma warning disable
         public event Action<StickyNote, string> ConsoleTextEntered;
 
         [SerializeField, HideInInspector]
@@ -20,6 +21,7 @@ namespace VIS.StickyNotes.MonoBehaviours
 
         [SerializeField, HideInInspector]
         private StickyNoteMode _mode = StickyNoteMode.Default;
+#pragma warning enable
 
         /// <summary>
         /// Write text
@@ -60,6 +62,13 @@ namespace VIS.StickyNotes.MonoBehaviours
             _text = default(string);
 #endif
         }
+
+#if UNITY_EDITOR
+        public void TriggerConsoleTextEntered(string text)
+        {
+            ConsoleTextEntered?.Invoke(this, text);
+        }
+#endif
 
         [ContextMenu("Console mode")]
         private void consoleMode() => _mode = StickyNoteMode.Console;

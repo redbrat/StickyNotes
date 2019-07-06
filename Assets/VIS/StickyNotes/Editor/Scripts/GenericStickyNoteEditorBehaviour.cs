@@ -135,9 +135,9 @@ namespace VIS.StickyNotes.Editor
                 if (_modePropsCache[i].enumValueIndex == (int)StickyNoteMode.Console)
                 {
                     consoleRect = GUILayoutUtility.GetRect(GUIContent.none, _textAreaStyles);
-                    borderRect.height += consoleRect.size.y;
+                    //borderRect.height += consoleRect.size.y;
                     consoleRect.size += Vector2.right * 8f;
-                    consoleRect.position -= Vector2.right * 5f + Vector2.up * 6f;
+                    consoleRect.position -= Vector2.right * 5f + Vector2.up * 8f;
                 }
 
                 var mainRect = borderRect;
@@ -338,6 +338,7 @@ namespace VIS.StickyNotes.Editor
         private void enterConsoleText(int i)
         {
             (_getTargetFunc(i) as IStickyNote).WriteLine(_consoleTextPropsCache[i].stringValue);
+            (_getTargetFunc(i) as IStickyNote).TriggerConsoleTextEntered(_consoleTextPropsCache[i].stringValue);
             _getSerializedObject(i).Update();
             _consoleTextPropsCache[i].stringValue = string.Empty;
         }
