@@ -78,8 +78,6 @@ namespace VIS.StickyNotes.Editor
             _textFieldStyle = _skin.GetStyle("TextField");
             _oneLineLabelStyle = _skin.GetStyle("OneLineLabel");
             _closeButtonStyle = _skin.GetStyle("CloseButton");
-
-            //_labelStyles.margin = new RectOffset(_contentMargin * 2, _contentMargin * 2, _contentMargin, _contentMargin);
         }
 
         internal void OnEnable()
@@ -106,19 +104,8 @@ namespace VIS.StickyNotes.Editor
             }
         }
 
-        private List<Object> _destroyable = new List<Object>();
-        private T registerDestroyableObject<T>(T obj) where T : Object
-        {
-            _destroyable.Add(obj);
-            return obj;
-        }
-
         internal void OnDisable()
         {
-            for (int i = 0; i < _destroyable.Count; i++)
-                Object.DestroyImmediate(_destroyable[i]);
-            _destroyable.Clear();
-
             _textPropsCache = null;
             _colorPropsCache = null;
             _descriptionPropsCache = null;
