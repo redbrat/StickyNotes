@@ -31,6 +31,8 @@ MonoBehaviour:
     aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
     velit esse cillum dolore eu fugiat nulla pariatur.
   _color: {r: 0.2860078, g: 0.8455882, b: 0.33617708, a: 1}
+  _consoleText: 
+  _mode: 0
 --- !u!114 &114872663661660256
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46,6 +48,8 @@ MonoBehaviour:
   _text: Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
     deserunt mollit anim id est laborum.
   _color: {r: 0.015686274, g: 0.7556185, b: 1, a: 1}
+  _consoleText: 
+  _mode: 0
 --- !u!114 &114885776639495868
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61,3 +65,28 @@ MonoBehaviour:
   _text: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
     incididunt ut labore et dolore magna aliqua.
   _color: {r: 0.9044118, g: 0.37240484, b: 0.49348232, a: 1}
+  _consoleText: 
+  _mode: 0
+--- !u!114 &114999199514354918
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3bef2e90d79e9ed488e40a78e178b3d4, type: 3}
+  m_Name: Note
+  m_EditorClassIdentifier: 
+  _headerText: Description
+  _text: "Handles.DrawSolidRectangleWithOutline(borderRect, _colorPropsCache[i].colorValue,
+    Color.white * 0.3f);\r\n                            Handles.DrawSolidRectangleWithOutline(headerRect,
+    _colorPropsCache[i].colorValue * 0.9f, _colorPropsCache[i].colorValue * 0.9f);\r\n\r\n
+    \                           GUI.Label(textRect, _textPropsCache[i].stringValue,
+    _labelStyles);\r\n                            GUILayout.BeginArea(headerRect);\r\n
+    \                           GUILayout.BeginHorizontal(_topPanelStyle);\r\n                            var
+    descriptionRect = workaroundGetRect(new GUIContent(_descriptionPropsCache[i].stringValue),
+    _descriptionStyles, headerRect, GUILayout.MaxWidth(200f));"
+  _color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  _consoleText: 
+  _mode: 0

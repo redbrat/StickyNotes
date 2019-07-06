@@ -168,6 +168,8 @@ MonoBehaviour:
     occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim
     id est laborum."
   _color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  _consoleText: 
+  _mode: 0
 --- !u!1 &250601320
 GameObject:
   m_ObjectHideFlags: 0
