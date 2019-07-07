@@ -12,6 +12,9 @@ namespace VIS.StickyNotes.ScriptableObjects.Editor
             return Instantiate(Resources.Load<Texture2D>("VIS/StickyNotes/Textures/note-icon"));
         }
 
-        protected override Object getTarget(int index) => target;
+        protected override Object getTarget(int index)
+        {
+            return target;
+        }
     }
 }

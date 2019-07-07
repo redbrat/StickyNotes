@@ -73,7 +73,13 @@ namespace VIS.StickyNotes.Editor
             _targetsCache[index].ApplyModifiedProperties();
         }
 
-        private bool needToDrawBaseInspector => true;
+        private bool needToDrawBaseInspector
+        {
+            get
+            {
+                return true;
+            }
+        }
 
         private void setRightTarget()
         {
@@ -97,29 +103,47 @@ namespace VIS.StickyNotes.Editor
             OnEnable();
         }
 
-        protected virtual bool needCloseButton(int index) => true;
-        protected virtual Object getTarget(int index) => null;
-
-        protected virtual Action<int> closeButtonCallback => index =>
+        protected virtual bool needCloseButton(int index)
         {
-            var assetPath = AssetDatabase.GetAssetPath(target);
-            var assets = AssetDatabase.LoadAllAssetsAtPath(assetPath).Where(a => a is StickyNote).Select(a => a as StickyNote).ToArray();
-            for (int i = 0; i < assets.Length; i++)
-            {
-                if (assets[i] == _targetsCache[index].targetObject)
-                {
-                    var path = AssetDatabase.GetAssetPath(assets[i]);
-                    DestroyImmediate(assets[i], true);
-                    AssetDatabase.ImportAsset(path);
-                    //AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(assets[i]));
-                    //AssetDatabase.RemoveObjectFromAsset(assets[i]);
-                    AssetDatabase.SaveAssets();
-                    OnUnsticked();
-                    break;
-                }
-            }
-        };
+            return true;
+        }
+        protected virtual Object getTarget(int index)
+        {
+            return null;
+        }
 
-        protected virtual Func<int, SerializedObject> getSerializedObject => (index) => _targetsCache[index];
+        protected virtual Action<int> closeButtonCallback
+        {
+            get
+            {
+                return index =>
+                {
+                    var assetPath = AssetDatabase.GetAssetPath(target);
+                    var assets = AssetDatabase.LoadAllAssetsAtPath(assetPath).Where(a => a is StickyNote).Select(a => a as StickyNote).ToArray();
+                    for (int i = 0; i < assets.Length; i++)
+                    {
+                        if (assets[i] == _targetsCache[index].targetObject)
+                        {
+                            var path = AssetDatabase.GetAssetPath(assets[i]);
+                            DestroyImmediate(assets[i], true);
+                            AssetDatabase.ImportAsset(path);
+                            //AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(assets[i]));
+                            //AssetDatabase.RemoveObjectFromAsset(assets[i]);
+                            AssetDatabase.SaveAssets();
+                            OnUnsticked();
+                            break;
+                        }
+                    }
+                };
+            }
+        }
+
+        protected virtual Func<int, SerializedObject> getSerializedObject
+        {
+            get
+            {
+                return index => _targetsCache[index];
+            }
+        }
     }
 }

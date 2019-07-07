@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace VIS.StickyNotes.ScriptableObjects
 {
-    //[CreateAssetMenu(fileName = "Note", menuName = "VIS/Create Sticky Note", order = 0)]
     public class StickyNote : ScriptableObject, IStickyNote
     {
 #pragma warning disable
@@ -67,13 +66,20 @@ namespace VIS.StickyNotes.ScriptableObjects
 #if UNITY_EDITOR
         public void TriggerConsoleTextEntered(string text)
         {
-            ConsoleTextEntered?.Invoke(this, text);
+            if (ConsoleTextEntered != null)
+                ConsoleTextEntered.Invoke(this, text);
         }
 #endif
 
         [ContextMenu("Console mode")]
-        private void consoleMode() => _mode = StickyNoteMode.Console;
+        private void consoleMode()
+        {
+            _mode = StickyNoteMode.Console;
+        }
         [ContextMenu("Defualt mode")]
-        private void defaultMode() => _mode = StickyNoteMode.Default;
+        private void defaultMode()
+        {
+            _mode = StickyNoteMode.Default;
+        }
     }
 }

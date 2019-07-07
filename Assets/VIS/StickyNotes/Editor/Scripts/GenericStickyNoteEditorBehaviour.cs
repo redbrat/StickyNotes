@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -11,7 +10,7 @@ namespace VIS.StickyNotes.Editor
         private const float _bodyPadding = 8f;
         private const int _contentMargin = 6;
         private const float _headerHeight = 40f;
-        private const float _closeButtonWidth = 30f;
+        private const float _closeButtonWidth = 29f;
 
         private SerializedProperty[] _descriptionPropsCache;
         private SerializedProperty[] _textPropsCache;
@@ -67,8 +66,8 @@ namespace VIS.StickyNotes.Editor
             _repaintAction = repaintAction;
             _getSerializedObject = getSerializedObject;
 
-            _skin = Resources.Load<GUISkin>($"Vis/StickyNotes/StickyNoteGuiSkin");
-            _closeTexture = Resources.Load<Texture>($"Vis/StickyNotes/Textures/close-icon");
+            _skin = Resources.Load<GUISkin>("Vis/StickyNotes/StickyNoteGuiSkin");
+            _closeTexture = Resources.Load<Texture>("Vis/StickyNotes/Textures/close-icon");
 
             _buttonStyles = _skin.GetStyle("Button");
             _descriptionStyles = _skin.GetStyle("Description");
@@ -238,8 +237,8 @@ namespace VIS.StickyNotes.Editor
                             if (closeButtonRect.HasValue)
                             {
                                 Handles.DrawSolidRectangleWithOutline(closeButtonRect.Value, _colorPropsCache[i].colorValue * 0.8f, _colorPropsCache[i].colorValue * 0.7f);
-                                if (GUI.Button(closeButtonRect.Value, closeButtonContent, _closeButtonStyle))
-                                    _closeButtonCallbacks?.Invoke(i);
+                                if (GUI.Button(closeButtonRect.Value, closeButtonContent, _closeButtonStyle) && _closeButtonCallbacks != null)
+                                    _closeButtonCallbacks.Invoke(i);
                             }
 
                             if (e.modifiers == EventModifiers.Control || e.modifiers == EventModifiers.Command)
@@ -286,7 +285,12 @@ namespace VIS.StickyNotes.Editor
 
                             _descriptionPropsCache[i].stringValue = EditorGUI.TextField(descriptionTextRect, _descriptionPropsCache[i].stringValue, _textFieldStyle);
 
+#if UNITY_2017
                             _colorPropsCache[i].colorValue = EditorGUI.ColorField(colorRect, GUIContent.none, _colorPropsCache[i].colorValue, false, false, false, new ColorPickerHDRConfig(0, 1, 0, 1));
+#else
+
+                            _colorPropsCache[i].colorValue = EditorGUI.ColorField(colorRect, GUIContent.none, _colorPropsCache[i].colorValue, false, false, false);
+#endif
 
                             Handles.DrawSolidRectangleWithOutline(backButtonRect, _colorPropsCache[i].colorValue * 0.8f, _colorPropsCache[i].colorValue * 0.7f);
                             if (GUI.Button(backButtonRect, backButtonContent, _buttonStyles))
@@ -298,8 +302,8 @@ namespace VIS.StickyNotes.Editor
                             if (closeButtonRect.HasValue)
                             {
                                 Handles.DrawSolidRectangleWithOutline(closeButtonRect.Value, _colorPropsCache[i].colorValue * 0.8f, _colorPropsCache[i].colorValue * 0.7f);
-                                if (GUI.Button(closeButtonRect.Value, closeButtonContent, _closeButtonStyle))
-                                    _closeButtonCallbacks?.Invoke(i);
+                                if (GUI.Button(closeButtonRect.Value, closeButtonContent, _closeButtonStyle) && _closeButtonCallbacks != null)
+                                    _closeButtonCallbacks.Invoke(i);
                             }
 
                             _applyModifiedPropertiesAction(i);

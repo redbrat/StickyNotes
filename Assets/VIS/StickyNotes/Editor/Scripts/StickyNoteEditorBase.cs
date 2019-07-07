@@ -45,12 +45,42 @@ namespace VIS.StickyNotes.Editor
             _stickyNoteEditorBehaviour.OnInspectorGUI();
         }
 
-        protected virtual SerializedProperty findProperty(int index, string propertyName) => serializedObject.FindProperty(propertyName);
-        protected virtual void applyModifiedProperties(int index) => serializedObject.ApplyModifiedProperties();
-        protected virtual bool needToDrawBaseInspector => false;
-        protected virtual bool needCloseButton(int index) => false;
-        protected virtual Action<int> closeButtonCallback => null;
-        protected virtual Object getTarget(int index) => null;
-        protected virtual Func<int, SerializedObject> getSerializedObject => null;
+        protected virtual SerializedProperty findProperty(int index, string propertyName)
+        {
+            return serializedObject.FindProperty(propertyName);
+        }
+        protected virtual void applyModifiedProperties(int index)
+        {
+            serializedObject.ApplyModifiedProperties();
+        }
+        protected virtual bool needToDrawBaseInspector
+        {
+            get
+            {
+                return false;
+            }
+        }
+        protected virtual bool needCloseButton(int index)
+        {
+            return false;
+        }
+        protected virtual Action<int> closeButtonCallback
+        {
+            get
+            {
+                return null;
+            }
+        }
+        protected virtual Object getTarget(int index)
+        {
+            return null;
+        }
+        protected virtual Func<int, SerializedObject> getSerializedObject
+        {
+            get
+            {
+                return null;
+            }
+        }
     }
 }

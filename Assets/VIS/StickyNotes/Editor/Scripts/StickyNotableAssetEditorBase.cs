@@ -22,7 +22,13 @@ namespace VIS.StickyNotes.Editor
             _targetCache.ApplyModifiedProperties();
         }
 
-        protected override bool needToDrawBaseInspector => true;
+        protected override bool needToDrawBaseInspector
+        {
+            get
+            {
+                return true;
+            }
+        }
 
         private void setRightTarget()
         {
